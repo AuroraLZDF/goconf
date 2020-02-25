@@ -33,7 +33,6 @@ func InitConfig(filePath string) *Config {
 
 // To obtain corresponding value of the key values
 func (c *Config) GetValue(section, name string) string {
-	fmt.Println("confList: ", c.ConfList)
 	_, ok := c.ConfList[section][name]
 	if ok {
 		return c.ConfList[section][name]

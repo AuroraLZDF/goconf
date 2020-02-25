@@ -1,123 +1,79 @@
-iniconf
+goconf
 ========
 
-**[The official website](https://github.com/clod-moon)**
 ## 描述
 
-使用iniconf更简单的读取go的ini配置文件以及根据特定格式的各种配置文件。
+使用 `goconf` 更简单的读取 `go` 的 `ini` 配置文件以及根据特定格式的各种配置文件。
 
 ## 安装方法
 
-	go get github.com/clod-moon/goconf
+```bash
+go get github.com/auroralzdf/goconf
+```
 
 ## 使用方法
 
->ini配置文件格式样列
+### ini配置文件格式样列
+```bash
+[database]
+hostname = localhost
+username = root
+password = 123456
+port     = 3306
 
-	[database]
-	username = root
-	password = password
-	hostname = localhost
-	
-	[admin]
-	username = root
-	password = password
-	
-	[nihao]
-	username = root
-	password = password
+[redis]
+username = root
+password = 123456
+port     = 6379
 
->初始化
+```
+### 初始化
+```go
+conf := goconf.InitConfig("./conf/conf.ini") // "./conf/conf.ini" 是你配置文件的位置
+```
 
-	conf := goini.InitConfig("./conf/conf.ini") //iniconf.SetConfig(filepath) 其中filepath是你ini 配置文件的所在位置
+### 获取单个配置信息
+```go
+username := conf.GetValue("database", "username") // database 是你的 [section]， username 是你要获取值的 key 名称
+fmt.Println(username) // root
+```
 
->获取单个配置信息
+### 删除一个配置信息
+```go
+conf.DeleteValue("database", "username")	//username 是你删除的 key
+username = conf.GetValue("database", "username")
+if len(username) == 0 {
+    fmt.Println("username is not exists") // this stdout username is not exists
+}
+```
 
-	username := conf.GetValue("database", "username") //database是你的[section]，username是你要获取值的key名称
-	fmt.Println(username) //root
+### 添加一个配置信息
+```go
+conf.SetValue("database", "username", "root")
+username = conf.GetValue("database", "username")
+fmt.Println(username) //root 添加配置信息如果存在 [section] 则添加或者修改对应的值，如果不存在则添加 section
+```
 
->删除一个配置信息
-
-	conf.DeleteValue("database", "username")	//username 是你删除的key
-	username = conf.GetValue("database", "username")
-	if len(username) == 0 {
-		fmt.Println("username is not exists") //this stdout username is not exists
-	}
-
->添加一个配置信息
-
-	conf.SetValue("database", "username", "chun")
-	username = conf.GetValue("database", "username")
-	fmt.Println(username) //chun 添加配置信息如果存在[section]则添加或者修改对应的值，如果不存在则添加section
-
->获取所有配置信息
-
-	conf.GetAllSetion() //返回map[string]map[string]string的格式 即setion=>key->value
+### 获取所有配置信息
+```go
+conf.GetAllSetion() //返回 map[string]map[string]string 的格式 即 setion => key -> value
+```
 
 ---
 
-iniconf
-========
-
-
-## About
-
-使用iniconf更简单的读取go的ini配置文件以及根据特定格式的各种配置文件。
-
-<<<<<<< HEAD
-## install
-	go get github.com/clod-moon/goconf
-
-## use example
-
->conf.ini
-
-	[database]
-	username = root
-	password = password
-	hostname = localhost
-	
-	[admin]
-	username = root
-	password = password
-	
-	[nihao]
-	username = root
-	password = password
-
->initialize
-
-	conf := goini.InitConfig("./conf/conf.ini") //goini.InitConfig(filepath) filepath = directory+file
-
->To obtain a single configuration information
-
-	username := conf.GetValue("database", "username") //username is your key you want get the value
-	fmt.Println(username) //root
-
->To delete a configuration information
-
-	conf.DeleteValue("database", "username")	//username is your delete the key
-	username = conf.GetValue("database", "username")
-	if len(username) == 0 {
-		fmt.Println("username is not exists") //this stdout username is not exists
-	}
-
->Add a configuration information
-
-	conf.SetValue("database", "username", "chun")
-	username = conf.GetValue("database", "username")
-	fmt.Println(username) //chun Adding/section configuration information if there is to add or modify the value of the corresponding, if there is no add section
-
->Get all the configuration information
-
-	conf.GetAllSetion() //return map[string]map[string]string  example:setion=>key->value
-	
-example
+# example
 =========
-```
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/auroraLZDF/goconf"
+)
+
 func main() {
 
-	conf := iniconf.InitConfig("./config.ini")
+	conf := goconf.InitConfig("./config.ini")
 
 	for key,value :=range conf.Conflist {
 		fmt.Println(key)
@@ -125,21 +81,30 @@ func main() {
 			fmt.Println(k,":",v)
 		}
 	}
-	fmt.Println(conf.GetValue("esinfo","addr"))
+	
+	fmt.Println()
+	
+	fmt.Println(conf.GetValue("database","hostname"))
 
-	conf.SetValue("esinfo","addr","127.100.100.100")
+	conf.SetValue("database","hostname","127.100.100.100")
 
-	fmt.Println(conf.GetValue("esinfo","addr"))
+	fmt.Println(conf.GetValue("database","hostname"))
 }
 ```
 >output
 ```
-esinfo
-addr : 127.0.0.1
-port : 9200
-index : case
-type : case
-127.0.0.1
+database
+hostname : localhost
+username : root
+password : 123456
+port     : 3306
+
+redis
+username : root
+password : 123456
+port     : 6379
+
+localhost
 127.100.100.100
 
 Process finished with exit code 0
