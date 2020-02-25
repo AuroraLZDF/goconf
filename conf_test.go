@@ -1,4 +1,4 @@
-package iniconf
+package goconf
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 
 func TestInitConfig(t *testing.T) {
 
-	conf = InitConfig("./conf/conf.ini")
+	conf = InitConfig(path)
 	if conf == nil {
 		t.Error("init failed")
 	}else {
@@ -24,14 +24,15 @@ func TestInitConfig(t *testing.T) {
 }
 
 func TestGetValue(t *testing.T) {
+	conf = InitConfig(path)
+
 	var tests = []struct{
 		baseKey string
 		key string
 		value string
 	}{
 		{"database","username","root"},
-		{"admin","username","root"},
-		{"nihao","username","root"},
+		{"redis","username","root"},
 	}
 
 	for _,test := range tests{
